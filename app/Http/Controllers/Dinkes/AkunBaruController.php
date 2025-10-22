@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Support\LikePattern;
 
 
 class AkunBaruController extends Controller
@@ -20,10 +21,11 @@ class AkunBaruController extends Controller
 
         $requests = User::with('role')
             ->where('status', false)
-            ->when($q, function ($qq) use ($q) {
-                $qq->where(function ($w) use ($q) {
-                    $w->where('name', 'ilike', "%{$q}%")
-                        ->orWhere('email', 'ilike', "%{$q}%");
+            ->when($q !== null && $q !== '', function ($qq) use ($q) {
+                $term = LikePattern::contains($q);
+                $qq->where(function ($w) use ($term) {
+                    $w->where('name', 'ilike', $term)
+                        ->orWhere('email', 'ilike', $term);
                 });
             })
             ->orderByDesc('created_at')

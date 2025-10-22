@@ -16,10 +16,10 @@ class SecurityHeaders
         // COMMON
         $script      = ["'self'"];
         $scriptElem  = ["'self'"];
-        $style       = ["'self'"];
-        $styleElem   = ["'self'", 'https://fonts.googleapis.com'];
-        $font        = ["'self'", 'https://fonts.gstatic.com'];
-        $img         = ["'self'", 'data:', 'blob:'];
+        $style       = ["'self'", "'unsafe-inline'"];
+        $styleElem   = ["'self'", "'unsafe-inline'"];
+        $font        = ["'self'"];
+        $img         = ["'self'", 'data:'];
         $connect     = ["'self'"];
 
         if ($isLocal) {
@@ -31,12 +31,6 @@ class SecurityHeaders
             $styleElem   = array_merge($styleElem, $viteHttp);
             $font        = array_merge($font, $viteHttp);
             $connect     = array_merge($connect, $viteHttp, $viteWs);
-
-            // DEV ONLY (HMR & sourcemap)
-            $style[]      = "'unsafe-inline'";
-            $styleElem[]  = "'unsafe-inline'";
-            $script[]     = "'unsafe-eval'";
-            $scriptElem[] = "'unsafe-eval'";
         }
 
         $directives = [
@@ -58,8 +52,17 @@ class SecurityHeaders
         $response->headers->set('Content-Security-Policy', implode('; ', $directives));
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+
+        if ($request->isSecure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+        }
+
+        $response->headers->remove('X-Powered-By');
+        if (function_exists('header_remove')) {
+            header_remove('X-Powered-By');
+        }
 
         return $response;
     }
