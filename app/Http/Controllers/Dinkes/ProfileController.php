@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class ProfileController extends Controller
 {
@@ -69,6 +71,59 @@ class ProfileController extends Controller
         $user->save();
 
         return back()->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    public function showPhoto(): StreamedResponse
+    {
+        $user = \App\Models\User::find(Auth::id());
+
+        if (! $user || ! $user->photo) {
+            abort(404);
+        }
+
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($user->photo)) {
+            abort(404);
+        }
+
+        $stream = $disk->readStream($user->photo);
+
+        if (! \is_resource($stream)) {
+            abort(404);
+        }
+
+        $mime = 'application/octet-stream';
+        $size = null;
+
+        try {
+            $mime = $disk->mimeType($user->photo) ?: $mime;
+        } catch (Throwable $e) {
+            // gunakan default
+        }
+
+        try {
+            $size = $disk->size($user->photo);
+        } catch (Throwable $e) {
+            $size = null;
+        }
+
+        $headers = [
+            'Content-Type'        => $mime,
+            'Cache-Control'       => 'private, max-age=604800',
+            'Content-Disposition' => 'inline; filename="'.basename($user->photo).'"',
+        ];
+
+        if ($size !== null) {
+            $headers['Content-Length'] = (string) $size;
+        }
+
+        return response()->stream(function () use (&$stream) {
+            fpassthru($stream);
+            if (\is_resource($stream)) {
+                fclose($stream);
+            }
+        }, 200, $headers);
     }
 
     public function destroyPhoto(Request $request)

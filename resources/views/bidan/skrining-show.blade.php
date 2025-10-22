@@ -39,11 +39,10 @@
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <a href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); this.closest('form').submit();"
-                                   class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+                                <button type="submit"
+                                        class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
                                     Log Out
-                                </a>
+                                </button>
                             </form>
                         </div>
                     </div>

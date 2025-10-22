@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DINKES – Dasbor</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/dropdown.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/dropdown.js', 'resources/js/dinkes/dashboard-charts.js'])
 </head>
 
 <body class="bg-[#F5F5F5] font-[Poppins] text-[#000000cc]">
@@ -126,12 +126,13 @@
                             <div class="text-sm font-medium">Depok</div>
 
                             <!-- Donut responsif, always centered & proportional -->
-                            <div class="relative aspect-square" style="width:min(130px,40vw); max-width:200px;">
+                            <div class="relative aspect-square w-[min(130px,40vw)] max-w-[200px]">
                                 <!-- Track -->
                                 <div class="absolute inset-0 rounded-full border-[12px] border-[#F1F1F1]"></div>
                                 <!-- Ring -->
-                                <div class="absolute inset-0 rounded-full"
-                                    style="background: conic-gradient(#B9257F {{ $pDepok }}%, #F1F1F1 0 100%);">
+                                <div class="absolute inset-0 rounded-full js-conic-chart"
+                                    data-chart-color="#B9257F"
+                                    data-chart-value="{{ $pDepok }}">
                                 </div>
                                 <!-- Hole -->
                                 <div class="absolute inset-[10px] bg-white rounded-full"></div>
@@ -159,10 +160,11 @@
                         <div class="w-full flex flex-col items-center gap-3">
                             <div class="text-sm font-medium">Non Depok</div>
 
-                            <div class="relative aspect-square" style="width:min(130px,40vw); max-width:200px;">
+                            <div class="relative aspect-square w-[min(130px,40vw)] max-w-[200px]">
                                 <div class="absolute inset-0 rounded-full border-[12px] border-[#F1F1F1]"></div>
-                                <div class="absolute inset-0 rounded-full"
-                                    style="background: conic-gradient(#E9A9CD {{ $pNon }}%, #F1F1F1 0 100%);">
+                                <div class="absolute inset-0 rounded-full js-conic-chart"
+                                    data-chart-color="#E9A9CD"
+                                    data-chart-value="{{ $pNon }}">
                                 </div>
                                 <div class="absolute inset-[10px] bg-white rounded-full"></div>
                                 <div class="absolute inset-0 grid place-items-center text-center">
@@ -285,8 +287,9 @@
                                 <div class="absolute inset-0 grid place-items-center">
                                     <div class="relative aspect-square w-full max-w-[min(360px,100%)]">
                                         <!-- Donut ring -->
-                                        <div class="relative w-full h-full rounded-full"
-                                            style="background: conic-gradient(#B9257F {{ $coverage }}%, #F1F1F1 {{ $coverage }}% 100%);">
+                                        <div class="relative w-full h-full rounded-full js-conic-chart"
+                                            data-chart-color="#B9257F"
+                                            data-chart-value="{{ $coverage }}">
                                             <!-- lubang donat -->
                                             <div class="absolute inset-0 m-[11%] bg-white rounded-full"></div>
                                             <!-- teks di tengah -->
@@ -320,8 +323,9 @@
                                     <div class="text-xs text-[#7C7C7C]">{{ $k['label'] }}</div>
                                     <div class="relative w-full h-full grid place-items-center py-2">
                                         <div class="relative aspect-square w-full max-w-[min(180px,100%)]">
-                                            <div class="relative w-full h-full rounded-full"
-                                                style="background: conic-gradient({{ $k['col'] }} {{ $k['pct'] }}%, #F1F1F1 {{ $k['pct'] }}% 100%);">
+                                            <div class="relative w-full h-full rounded-full js-conic-chart"
+                                                data-chart-color="{{ $k['col'] }}"
+                                                data-chart-value="{{ $k['pct'] }}">
                                                 <div class="absolute inset-0 m-[14%] bg-white rounded-full"></div>
                                                 <div class="absolute inset-0 grid place-items-center">
                                                     <div class="text-lg font-semibold tabular-nums">
@@ -342,14 +346,10 @@
                     <!-- Footer: legend ringkas & ring progress segmented opsional -->
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3 text-sm flex-wrap">
-                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm"
-                                    style="background:#B9257F"></span>KF1</span>
-                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm"
-                                    style="background:#D24A97"></span>KF2</span>
-                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm"
-                                    style="background:#E178B3"></span>KF3</span>
-                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm"
-                                    style="background:#F0A6CF"></span>KF4</span>
+                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#B9257F]"></span>KF1</span>
+                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#D24A97]"></span>KF2</span>
+                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#E178B3]"></span>KF3</span>
+                            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#F0A6CF]"></span>KF4</span>
                         </div>
                         <div class="text-xs text-[#7C7C7C]">Target 4× kunjungan per pasien</div>
                     </div>
@@ -405,10 +405,8 @@
                         <!-- Progress & legend + spark bars -->
                         <div class="flex flex-col justify-center gap-4">
                             <div class="h-4 w-full rounded-full bg-[#F1F1F1] overflow-hidden">
-                                <div class="h-full bg-[#39E93F] inline-block" style="width: {{ $pHadir }}%">
-                                </div>
-                                <div class="h-full bg="#E20D0D inline-block style="width: {{ $pMangkir }}%">
-                                </div>
+                                <div class="h-full bg-[#39E93F] inline-block js-width-bar" data-width-percent="{{ $pHadir }}"></div>
+                                <div class="h-full bg-[#E20D0D] inline-block js-width-bar" data-width-percent="{{ $pMangkir }}"></div>
                             </div>
 
                             <div class="text-sm space-y-2">
@@ -427,8 +425,7 @@
                             <div class="grid grid-cols-12 gap-1 items-end h-14">
                                 @foreach ($seriesAbsensi as $v)
                                     @php $h = 10 + min(100, (int) $v); @endphp
-                                    <div class="rounded-[6px] bg-[#B9257F]/60" style="height: {{ $h }}%">
-                                    </div>
+                                    <div class="rounded-[6px] bg-[#B9257F]/60 js-height-bar" data-height-percent="{{ $h }}"></div>
                                 @endforeach
                             </div>
                         </div>
@@ -565,14 +562,13 @@
                                 <td>
                                     @php
                                         $mapRisk = [
-                                            'non-risk' => ['bg' => '#39E93F33', 'tx' => '#39E93F', 'label' => 'Normal'],
-                                            'sedang' => ['bg' => '#E2D30D33', 'tx' => '#E2D30D', 'label' => 'Sedang'],
-                                            'tinggi' => ['bg' => '#E20D0D33', 'tx' => '#E20D0D', 'label' => 'Tinggi'],
+                                            'non-risk' => ['bg' => 'bg-[#39E93F33]', 'text' => 'text-[#39E93F]', 'label' => 'Normal'],
+                                            'sedang' => ['bg' => 'bg-[#E2D30D33]', 'text' => 'text-[#E2D30D]', 'label' => 'Sedang'],
+                                            'tinggi' => ['bg' => 'bg-[#E20D0D33]', 'text' => 'text-[#E20D0D]', 'label' => 'Tinggi'],
                                         ];
                                         $rk = $mapRisk[$row->resiko ?? 'non-risk'];
                                     @endphp
-                                    <span class="px-3 py-1 rounded-full"
-                                        style="background: {{ $rk['bg'] }}; color: {{ $rk['tx'] }};">{{ $rk['label'] }}</span>
+                                    <span class="px-3 py-1 rounded-full {{ $rk['bg'] }} {{ $rk['text'] }}">{{ $rk['label'] }}</span>
                                 </td>
                                 <td>
                                     <a href="#"
