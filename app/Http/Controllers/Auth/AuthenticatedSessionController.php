@@ -10,8 +10,13 @@ use Illuminate\Support\Facades\Log;
 class AuthenticatedSessionController extends Controller
 {
     // GET /login
-    public function create()
+    public function create(Request $request)
     {
+        // Block query string tampering (mis. percobaan SQLi via parameter GET)
+        if ($request->query->count() > 0) {
+            return redirect()->route('login');
+        }
+
         // tampilkan halaman login
         return view('auth.login');
     }
@@ -53,8 +58,12 @@ class AuthenticatedSessionController extends Controller
     }
 
     // GET /login-pasien
-    public function createPasien()
+    public function createPasien(Request $request)
     {
+        if ($request->query->count() > 0) {
+            return redirect()->route('pasien.login');
+        }
+
         return view('auth.login-pasien');
     }
 

@@ -34,7 +34,8 @@
                         @csrf
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" name="email" id="email" placeholder="akun@gmail.com" required
+                            <input type="email" name="email" id="email" placeholder="akun@gmail.com" required autocomplete="username"
+                                value="{{ old('email') }}"
                                 class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D91A8B] focus:border-[#D91A8B]">
                         </div>
 

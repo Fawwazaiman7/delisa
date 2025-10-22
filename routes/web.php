@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
             // Profile
             Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
             Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+            Route::get('/profile/photo', [ProfileController::class, 'showPhoto'])->name('profile.photo.show');
             Route::delete('/profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
         });
 

@@ -45,7 +45,7 @@
                             </svg>
                         </div>
                         <img id="avatarPreview"
-                            src="{{ $user->photo ? Storage::url($user->photo) . '?t=' . optional($user->updated_at)->timestamp : '' }}"
+                            src="{{ $user->photo ? route('dinkes.profile.photo.show', ['ver' => optional($user->updated_at)->timestamp]) : '' }}"
                             data-has-src="{{ $user->photo ? '1' : '0' }}" alt="Avatar"
                             class="w-32 h-32 rounded-full object-cover ring-4 ring-pink-100 shadow hidden" />
 
