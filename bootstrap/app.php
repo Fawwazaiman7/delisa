@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 
 use App\Http\Middleware\SecurityHeaders; // <-- import
+use Illuminate\Http\Middleware\HandleCors;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'role'     => \App\Http\Middleware\EnsureRole::class,
         ]);
+
+        $middleware->append(HandleCors::class);
 
         // >>> tambahkan ke group web
         $middleware->web(append: [
