@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Skrining;
 use App\Models\Puskesmas;
+use App\Support\LikePattern;
 
 class SkriningController extends Controller
 {
@@ -40,12 +41,13 @@ class SkriningController extends Controller
     public function puskesmasSearch(Request $request)
     {
         $q = trim($request->query('q', ''));
+        $likeTerm = $q !== '' ? LikePattern::contains($q) : null;
 
         $rows = Puskesmas::query()
-            ->when($q !== '', function ($qr) use ($q) {
-                $qr->where('nama_puskesmas', 'like', "%{$q}%")
-                   ->orWhere('kecamatan', 'like', "%{$q}%")
-                   ->orWhere('lokasi', 'like', "%{$q}%");
+            ->when($likeTerm !== null, function ($qr) use ($likeTerm) {
+                $qr->where('nama_puskesmas', 'like', $likeTerm)
+                   ->orWhere('kecamatan', 'like', $likeTerm)
+                   ->orWhere('lokasi', 'like', $likeTerm);
             })
             ->orderBy('nama_puskesmas')
             ->limit(20)

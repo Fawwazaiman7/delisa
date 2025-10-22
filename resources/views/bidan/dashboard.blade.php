@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bidan — Dashboard</title>
-    @vite('resources/css/app.css')
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
     <div class="flex min-h-screen">
@@ -29,7 +28,7 @@
 
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" class="flex items-center gap-2">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&color=F472B6&background=FCE7F3" alt="Avatar" class="h-10 w-10 rounded-full border-2 border-pink-100">
+                            <x-avatar-initials :name="Auth::user()->name" />
                             <div class="text-left hidden md:block">
                                 <div class="text-sm font-medium text-gray-700">{{ Auth::user()->name }}</div>
                                 <div class="text-xs text-gray-500">{{ Auth::user()->role->nama_role }}</div>

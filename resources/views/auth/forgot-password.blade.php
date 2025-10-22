@@ -5,14 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupa Password - DeLISA</title>
-    @vite('resources/css/app.css')
-    <style>
-        /* Mengimpor font Poppins dari Google Fonts agar visual teks 100% cocok dengan desain modern */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/petugas/modal-role-petugas.js'])
 </head>
 
 <body class="bg-gray-100">
@@ -94,16 +87,6 @@
         </div>
     </div>
 
-    <script>
-        const openBtn = document.getElementById('openRoleModal');
-        const modal = document.getElementById('roleModal');
-        const closeBtn = document.getElementById('closeRoleModal');
-        const backdrop = document.getElementById('roleModalBackdrop');
-
-        openBtn?.addEventListener('click', () => modal.classList.remove('hidden'));
-        closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
-        backdrop?.addEventListener('click', () => modal.classList.add('hidden'));
-    </script>
 </body>
 
 </html>

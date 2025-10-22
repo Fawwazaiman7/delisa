@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Dinkes;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Support\LikePattern;
 
 class PasienNifasController extends Controller
 {
     public function index(Request $request)
     {
         $q = trim($request->get('q', ''));
+        $likeTerm = $q !== '' ? LikePattern::contains($q) : null;
 
         $rows = DB::table('pasiens as p')
             ->join('users as u', 'u.id', '=', 'p.user_id')
@@ -28,11 +30,11 @@ class PasienNifasController extends Controller
                             ELSE 'Puskesmas'
                          END as role_penanggung")
             )
-            ->when($q !== '', function ($qr) use ($q) {
+            ->when($likeTerm !== null, function ($qr) use ($likeTerm) {
                 // pakai ILIKE untuk Postgres (case-insensitive)
-                $qr->where(function ($w) use ($q) {
-                    $w->where('u.name', 'ILIKE', "%{$q}%")
-                      ->orWhere('p.nik', 'ILIKE', "%{$q}%");
+                $qr->where(function ($w) use ($likeTerm) {
+                    $w->where('u.name', 'ILIKE', $likeTerm)
+                      ->orWhere('p.nik', 'ILIKE', $likeTerm);
                 });
             })
             ->orderBy('u.name')

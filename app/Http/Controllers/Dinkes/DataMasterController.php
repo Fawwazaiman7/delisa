@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Support\LikePattern;
 
 class DataMasterController extends Controller
 {
@@ -22,6 +23,7 @@ class DataMasterController extends Controller
     {
         $tab = $request->query('tab', 'bidan'); // bidan | rs | puskesmas
         $q   = trim((string) $request->query('q', ''));
+        $likeTerm = $q !== '' ? LikePattern::contains($q) : null;
 
         $roleMap = ['bidan' => 'bidan', 'rs' => 'rs', 'puskesmas' => 'puskesmas'];
         $roleId  = $this->roleId($roleMap[$tab] ?? 'bidan');
@@ -34,11 +36,11 @@ class DataMasterController extends Controller
             $accounts = $base
                 ->join('rumah_sakits', 'rumah_sakits.user_id', '=', 'users.id')
                 ->select('users.id', 'users.name', 'users.email')
-                ->when($q !== '', function ($qq) use ($q) {
-                    $qq->where(function ($w) use ($q) {
-                        $w->where('users.name', 'ilike', "%$q%")
-                            ->orWhere('users.email', 'ilike', "%$q%")
-                            ->orWhere('rumah_sakits.nama', 'ilike', "%$q%");
+                ->when($likeTerm !== null, function ($qq) use ($likeTerm) {
+                    $qq->where(function ($w) use ($likeTerm) {
+                        $w->where('users.name', 'ilike', $likeTerm)
+                            ->orWhere('users.email', 'ilike', $likeTerm)
+                            ->orWhere('rumah_sakits.nama', 'ilike', $likeTerm);
                     });
                 })
                 ->orderBy('users.created_at', 'desc')
@@ -47,11 +49,11 @@ class DataMasterController extends Controller
             $accounts = $base
                 ->join('puskesmas', 'puskesmas.user_id', '=', 'users.id')
                 ->select('users.id', 'users.name', 'users.email', 'puskesmas.nama_puskesmas')
-                ->when($q !== '', function ($qq) use ($q) {
-                    $qq->where(function ($w) use ($q) {
-                        $w->where('users.name', 'ilike', "%$q%")
-                            ->orWhere('users.email', 'ilike', "%$q%")
-                            ->orWhere('puskesmas.nama_puskesmas', 'ilike', "%$q%");
+                ->when($likeTerm !== null, function ($qq) use ($likeTerm) {
+                    $qq->where(function ($w) use ($likeTerm) {
+                        $w->where('users.name', 'ilike', $likeTerm)
+                            ->orWhere('users.email', 'ilike', $likeTerm)
+                            ->orWhere('puskesmas.nama_puskesmas', 'ilike', $likeTerm);
                     });
                 })
                 ->orderBy('users.created_at', 'desc')
@@ -61,11 +63,11 @@ class DataMasterController extends Controller
                 ->join('bidans', 'bidans.user_id', '=', 'users.id')
                 ->leftJoin('puskesmas', 'puskesmas.id', '=', 'bidans.puskesmas_id')
                 ->select('users.id', 'users.name', 'users.email', 'puskesmas.nama_puskesmas')
-                ->when($q !== '', function ($qq) use ($q) {
-                    $qq->where(function ($w) use ($q) {
-                        $w->where('users.name', 'ilike', "%$q%")
-                            ->orWhere('users.email', 'ilike', "%$q%")
-                            ->orWhere('puskesmas.nama_puskesmas', 'ilike', "%$q%");
+                ->when($likeTerm !== null, function ($qq) use ($likeTerm) {
+                    $qq->where(function ($w) use ($likeTerm) {
+                        $w->where('users.name', 'ilike', $likeTerm)
+                            ->orWhere('users.email', 'ilike', $likeTerm)
+                            ->orWhere('puskesmas.nama_puskesmas', 'ilike', $likeTerm);
                     });
                 })
                 ->orderBy('users.created_at', 'desc')
