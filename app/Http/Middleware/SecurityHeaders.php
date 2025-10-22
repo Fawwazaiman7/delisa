@@ -19,7 +19,7 @@ class SecurityHeaders
         $style       = ["'self'"];
         $styleElem   = ["'self'"];
         $font        = ["'self'"];
-        $img         = ["'self'", 'data:'];
+        $img         = ["'self'", 'data:', 'blob:'];
         $connect     = ["'self'"];
 
         if ($isLocal) {
@@ -31,7 +31,28 @@ class SecurityHeaders
             $styleElem   = array_merge($styleElem, $viteHttp);
             $font        = array_merge($font, $viteHttp);
             $connect     = array_merge($connect, $viteHttp, $viteWs);
+            $img         = array_merge($img, ['http://localhost:8000', 'http://127.0.0.1:8000']);
         }
+
+        $storageOrigins = $this->extractOrigins([
+            config('filesystems.disks.public.url'),
+            config('filesystems.disks.s3.url'),
+            config('filesystems.disks.s3.endpoint')
+                ? config('filesystems.disks.s3.endpoint')
+                : null,
+        ]);
+
+        if ($storageOrigins) {
+            $img = array_merge($img, $storageOrigins);
+        }
+
+        $script     = array_values(array_unique($script));
+        $scriptElem = array_values(array_unique($scriptElem));
+        $style      = array_values(array_unique($style));
+        $styleElem  = array_values(array_unique($styleElem));
+        $font       = array_values(array_unique($font));
+        $img        = array_values(array_unique($img));
+        $connect    = array_values(array_unique($connect));
 
         $directives = [
             "default-src 'self'",
@@ -65,5 +86,34 @@ class SecurityHeaders
         }
 
         return $response;
+    }
+
+    /**
+     * @param  array<int, string|null>  $urls
+     * @return array<int, string>
+     */
+    private function extractOrigins(array $urls): array
+    {
+        $origins = [];
+
+        foreach ($urls as $url) {
+            if (! $url) {
+                continue;
+            }
+
+            $parts = parse_url($url);
+            if (! $parts || empty($parts['scheme']) || empty($parts['host'])) {
+                continue;
+            }
+
+            $origin = rtrim($parts['scheme'].'://'.$parts['host'], '/');
+            if (! empty($parts['port'])) {
+                $origin .= ':'.$parts['port'];
+            }
+
+            $origins[$origin] = $origin;
+        }
+
+        return array_values($origins);
     }
 }
