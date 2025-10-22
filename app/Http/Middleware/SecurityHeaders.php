@@ -16,8 +16,8 @@ class SecurityHeaders
         // COMMON
         $script      = ["'self'"];
         $scriptElem  = ["'self'"];
-        $style       = ["'self'", "'unsafe-inline'"];
-        $styleElem   = ["'self'", "'unsafe-inline'"];
+        $style       = ["'self'"];
+        $styleElem   = ["'self'"];
         $font        = ["'self'"];
         $img         = ["'self'", 'data:'];
         $connect     = ["'self'"];
